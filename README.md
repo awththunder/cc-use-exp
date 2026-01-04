@@ -77,7 +77,7 @@
 | `/requirement-interrogate` | 需求极刑审问，挖掘逻辑漏洞 | `/requirement-interrogate 用户要导出数据` |
 | `/design-checklist` | 生成设计质量检查清单 | `/design-checklist` |
 | `/project-init` | 为新项目初始化 Claude Code 配置 | `/project-init` |
-| `/project-scan` | 扫描已有项目生成 CLAUDE.md | `/project-scan` |
+| `/project-scan` | 扫描项目生成配置（CLAUDE.md/restart.sh/ignore/Docker） | `/project-scan` |
 | `/style-extract` | 从代码或设计图提取样式变量 | `/style-extract` |
 | `/status` | 显示当前配置状态（Rules/Skills/LSP） | `/status` |
 
