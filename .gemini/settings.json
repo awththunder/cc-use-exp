@@ -1,0 +1,20 @@
+{
+  "$schema": "https://geminicli.com/schemas/settings.json",
+  "core": {
+    "checkForUpdates": true,
+    "theme": "Default"
+  },
+  "output": {
+    "format": "text"
+  },
+  "tools": {
+    "useRipgrep": true,
+    "truncateLargeToolOutputs": true
+  },
+  "prompts": {
+    "enableAiCompletions": true
+  },
+  "context": {
+    "memorySearchIncludeDirectories": true
+  }
+}
