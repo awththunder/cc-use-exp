@@ -1,11 +1,39 @@
 # AI 编码助手配置中心
 
-版本：v1.1
-更新：2026-01-05
+版本：v1.2
+更新：2026-01-06
 作者：wwj
 
-> 本项目用于开发和维护 AI 编码助手的用户级配置，支持 **Claude Code** 和 **Gemini CLI**。
+> 本项目是 **配置模板仓库**，用于开发和维护 AI 编码助手的用户级配置。
 > 按费力度从低到高排序，让你用最少的操作获得最大的帮助。
+
+---
+
+## 项目定位
+
+### 使用架构
+
+```
+本项目                      用户目录                    其他项目
+├── .claude/  ──覆盖──>    ~/.claude/  <──读取──      .claude/ (空)
+└── .gemini/  ──覆盖──>    ~/.gemini/  <──读取──      .gemini/ (空)
+```
+
+- **本项目**：配置开发/维护环境，不参与实际业务开发
+- **用户目录**：实际生效的配置
+- **其他项目**：配置目录为空，自动使用用户目录配置
+
+### 两套配置的关系
+
+| 目录 | 服务对象 | 说明 |
+|------|---------|------|
+| `.claude/` | Claude Code | Anthropic 的 CLI 工具 |
+| `.gemini/` | Gemini CLI | Google 的 CLI 工具 |
+
+**两者完全独立**：
+- Claude Code 只读取 `~/.claude/`，不读取 `~/.gemini/`
+- Gemini CLI 只读取 `~/.gemini/`，不读取 `~/.claude/`
+- 配置内容可能相似（如禁止行为、技术栈偏好），但这不是重复，而是各自需要的独立配置
 
 ---
 
@@ -20,13 +48,27 @@
 
 ## 快速部署
 
-```bash
-# Claude Code
-cp -r .claude/* ~/.claude/
+### Claude Code
 
-# Gemini CLI
-cp -r .gemini/* ~/.gemini/
+```bash
+# 只覆盖配置目录，保留历史记录
+rm -rf ~/.claude/rules ~/.claude/skills ~/.claude/commands ~/.claude/templates ~/.claude/tasks
+cp -r .claude/rules ~/.claude/
+cp -r .claude/skills ~/.claude/
+cp -r .claude/commands ~/.claude/
+cp -r .claude/templates ~/.claude/
+cp -r .claude/tasks ~/.claude/
+cp .claude/CLAUDE.md ~/.claude/
 ```
+
+### Gemini CLI
+
+```bash
+# Gemini 可以完全覆盖（无历史记录）
+rm -rf ~/.gemini && cp -r .gemini ~/.gemini
+```
+
+> **注意**：Claude Code 的 `~/.claude/` 包含历史记录（`history.jsonl`、`projects/` 等），不能整体删除，只覆盖配置目录。
 
 ---
 
@@ -85,6 +127,7 @@ cp -r .gemini/* ~/.gemini/
 | `/quick-review` | 快速审查（git diff + 简要意见） | `/quick-review` |
 | `/code-review` | 正式代码审查 | `/code-review` |
 | `/debug` | 复杂问题排查（复现→假设→验证→修复） | `/debug 定时任务不执行` |
+| `/commit-msg` | 生成 git commit message | `/commit-msg` 或 `/commit-msg all` |
 
 #### 中频命令（按需使用）
 
@@ -115,6 +158,7 @@ cp -r .gemini/* ~/.gemini/
 | 日常写代码 | 直接写，Rules + Skills 自动生效 | ⭐ |
 | 修个小 Bug | `/fix 问题描述` | ⭐⭐ |
 | 提交前快速看看 | `/quick-review` | ⭐⭐ |
+| 生成 commit message | `/commit-msg` | ⭐⭐ |
 | 正式代码审查 | `/code-review` | ⭐⭐ |
 | 复杂 Bug 排查 | `/debug 问题描述` | ⭐⭐⭐ |
 | 安全审查 | `/security-review` | ⭐⭐⭐ |
@@ -340,32 +384,37 @@ claude
 ### 工作原理
 
 ```
-本项目 .claude/  ──开发/优化──>  确认无误  ──复制──>  ~/.claude/
+本项目 .claude/  ──开发/优化──>  确认无误  ──覆盖配置目录──>  ~/.claude/
 ```
 
 - 在本项目 `.claude/` 目录下开发和优化配置
-- 开发时独立运行，不依赖 `~/.claude/` 中的任何文件
-- 确认无误后，将 `.claude/` 整体复制到 `~/.claude/` 生效
+- 确认无误后，**只覆盖配置目录**到 `~/.claude/`
+- `~/.claude/` 中的历史记录（`history.jsonl`、`projects/` 等）会保留
 
-### 首次部署
+### 配置目录 vs 运行时数据
 
-```bash
-# 1. 备份现有配置（推荐）
-cp -r ~/.claude ~/.claude.backup.$(date +%Y%m%d)
+| 类型 | 目录/文件 | 部署时 |
+|------|----------|--------|
+| 配置 | `rules/`, `skills/`, `commands/`, `templates/`, `tasks/`, `CLAUDE.md` | 覆盖 |
+| 运行时 | `history.jsonl`, `projects/`, `todos/`, `settings.local.json` 等 | 保留 |
 
-# 2. 复制新配置
-cp -r .claude/* ~/.claude/
-
-# 3. 验证部署
-# 启动 Claude Code，执行 /memory 确认配置加载正确
-```
-
-### 更新部署
+### 部署命令
 
 ```bash
-# 直接覆盖
-cp -r .claude/* ~/.claude/
+# 只覆盖配置目录，保留历史记录
+rm -rf ~/.claude/rules ~/.claude/skills ~/.claude/commands ~/.claude/templates ~/.claude/tasks
+cp -r .claude/rules ~/.claude/
+cp -r .claude/skills ~/.claude/
+cp -r .claude/commands ~/.claude/
+cp -r .claude/templates ~/.claude/
+cp -r .claude/tasks ~/.claude/
+cp .claude/CLAUDE.md ~/.claude/
+
+# 验证部署
+# 启动 Claude Code，执行 /status 确认配置加载正确
 ```
+
+> **注意**：不要整体删除 `~/.claude/`，否则会丢失对话历史记录（`claude -c` 依赖）。
 
 ---
 
@@ -411,6 +460,7 @@ GEMINI.md 自动加载，提供以下保护：
 | 命令 | 用途 | 使用示例 |
 |------|------|---------|
 | `/layout` | 重构页面布局 | `/layout src/views/Home.vue` |
+| `/vue-split` | 拆分大型 Vue 文件 | `/vue-split src/views/Home.vue` |
 | `/fix` | 快速修复前端 Bug | `/fix 按钮点击无响应` |
 | `/code-review` | 审查前端代码 | `/code-review` |
 | `/quick-review` | 快速审查 | `/quick-review` |
@@ -424,6 +474,7 @@ GEMINI.md 自动加载，提供以下保护：
 |------|---------|--------|
 | 写 Vue 组件 | 直接写，规则自动生效 | ⭐ |
 | 页面布局重构 | `/layout 文件路径` | ⭐⭐ |
+| Vue 文件过大 | `/vue-split 文件路径` | ⭐⭐ |
 | 修复样式问题 | `/fix 问题描述` | ⭐⭐ |
 | 组件代码审查 | `/code-review` | ⭐⭐ |
 | 查 Vue/Element 文档 | 让 Gemini 调用 Context7 | ⭐ |
@@ -649,11 +700,11 @@ gemini
 ### 首次部署
 
 ```bash
-# 1. 备份现有配置（推荐）
-cp -r ~/.gemini ~/.gemini.backup.$(date +%Y%m%d)
+# 1. 备份现有配置（如有）
+[ -d ~/.gemini ] && cp -r ~/.gemini ~/.gemini.backup.$(date +%Y%m%d)
 
-# 2. 复制配置
-cp -r .gemini/* ~/.gemini/
+# 2. 完全覆盖部署
+rm -rf ~/.gemini && cp -r .gemini ~/.gemini
 
 # 3. 验证
 gemini
@@ -663,8 +714,11 @@ gemini
 ### 更新部署
 
 ```bash
-cp -r .gemini/* ~/.gemini/
+# 备份后完全覆盖
+cp -r ~/.gemini ~/.gemini.backup.$(date +%Y%m%d) && rm -rf ~/.gemini && cp -r .gemini ~/.gemini
 ```
+
+> **注意**：使用完全覆盖（先删后复制）而非合并，确保配置与模板完全一致。
 
 ---
 

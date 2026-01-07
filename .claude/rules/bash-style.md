@@ -1,3 +1,13 @@
+---
+paths:
+  - "**/*.sh"
+  - "**/Dockerfile"
+  - "**/Makefile"
+  - "**/*.yml"
+  - "**/*.yaml"
+  - "**/*.md"
+---
+
 # Bash 编写规范
 
 版本：v1.0
@@ -7,14 +17,6 @@
 > **部署位置**: `~/.claude/rules/bash-style.md`
 > **生效范围**: Shell 脚本及相关配置文件
 
----
-paths:
-  - "**/*.sh"
-  - "**/Dockerfile"
-  - "**/Makefile"
-  - "**/*.yml"
-  - "**/*.yaml"
-  - "**/*.md"
 ---
 
 ## 适用说明
