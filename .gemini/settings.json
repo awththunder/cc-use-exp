@@ -4,6 +4,9 @@
     "checkForUpdates": true,
     "theme": "Default"
   },
+  "models": {
+    "previewFeatures": true
+  },
   "output": {
     "format": "text"
   },
@@ -16,5 +19,10 @@
   },
   "context": {
     "memorySearchIncludeDirectories": true
+  },
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
+    }
   }
 }

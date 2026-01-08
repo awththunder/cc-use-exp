@@ -55,19 +55,38 @@ prompt = """
 
 ### 4.5. 检查蒙版定位基准（重点）
 
-**蒙版位置跳动的根本原因**：蒙版相对于「内容高度」居中，而非「固定高度基准」居中。
+**蒙版位置跳动的根本原因**：蒙版相对于「内容高度」居中，而非「视口高度」居中。
 
 检查每个带蒙版的页面：
-1. 蒙版的定位基准是什么？
-   - ✅ 正确：`position: fixed`（相对视口）
-   - ✅ 正确：`position: absolute` + 容器有 `min-height`（固定高度）
+
+1. 蒙版的定位方式是什么？
+   - ✅ **推荐**：`position: fixed`（相对视口居中，与内容高度无关）
+   - ⚠️ 可接受：`position: absolute` + 容器有固定 `min-height`
    - ❌ 错误：`position: absolute` + 容器高度由内容撑开
-2. 容器是否设置了固定的 `min-height`？
+
+2. 如果使用 `absolute`，容器是否设置了固定高度？
    - ✅ `min-height: calc(100vh - header高度)`
    - ❌ `min-height: auto` 或未设置
+   - ❌ `min-height: 固定像素值`（如 500px，不同屏幕会有问题）
+
 3. 居中方式是否一致？
    - ✅ 所有页面使用相同的居中方式
    - ❌ 不同页面使用不同的实现
+
+**推荐方案**：使用 `position: fixed` + `inset: 0` + `display: flex` 居中
+
+```css
+/* 推荐的蒙版样式 */
+.overlay {
+  position: fixed;
+  inset: 0;  /* 等同于 top:0; right:0; bottom:0; left:0; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  z-index: var(--z-overlay, 100);
+}
+```
 
 ### 5. 对比分析
 
@@ -327,18 +346,43 @@ prompt = """
 | Review.vue | absolute | 500px | 蒙版偏上 |
 | Stats.vue | absolute | auto | 蒙版居中 |
 
-**根本原因**：蒙版相对于「内容高度」居中，而非「固定高度基准」居中。
+**根本原因**：蒙版使用 `position: absolute`，相对于「内容高度」居中，而非「视口高度」居中。
 
-**建议方案**：
-1. 所有页面容器统一设置 `min-height: calc(100vh - header高度)`
-2. 或改用 `position: fixed` 实现全屏蒙版
+---
 
-预览修改：
+**方案 A（推荐）：改用 `position: fixed`**
+
+蒙版相对视口居中，彻底解决跳动问题：
+
+【修改文件】components/Overlay.vue（或各页面蒙版样式）
+┌────────────────────────────────────
+│ .overlay {
+│ -  position: absolute;
+│ -  top: 50%;
+│ -  left: 50%;
+│ -  transform: translate(-50%, -50%);
+│ +  position: fixed;
+│ +  inset: 0;
+│ +  display: flex;
+│ +  align-items: center;
+│ +  justify-content: center;
+│    background: rgba(255, 255, 255, 0.9);
+│    z-index: var(--z-overlay, 100);
+│ }
+└────────────────────────────────────
+
+选择方案 A？[Y/n/查看方案 B]
+
+---
+
+**方案 B：保持 `absolute`，统一容器高度**
+
+所有页面容器统一设置固定最小高度：
 
 【修改文件】Diary.vue
 ┌────────────────────────────────────
 │ .page-content {
-│ +  min-height: calc(100vh - 60px);
+│ +  min-height: calc(100vh - var(--header-height, 60px));
 │    position: relative;
 │ }
 └────────────────────────────────────
@@ -347,12 +391,20 @@ prompt = """
 ┌────────────────────────────────────
 │ .review-container {
 │ -  min-height: 500px;
-│ +  min-height: calc(100vh - 60px);
+│ +  min-height: calc(100vh - var(--header-height, 60px));
 │    position: relative;
 │ }
 └────────────────────────────────────
 
-是否应用？[Y/n/跳过]
+【修改文件】Stats.vue
+┌────────────────────────────────────
+│ .stats-wrapper {
+│ +  min-height: calc(100vh - var(--header-height, 60px));
+│    position: relative;
+│ }
+└────────────────────────────────────
+
+选择方案 B？[Y/n]
 ```
 
 ```
@@ -402,22 +454,63 @@ div.page-container (position: relative, min-height: 统一值)
 ### 修改的文件
 - [文件列表]
 - [新建文件]（如有）
-
-### 下一步
-→ 自动启动 Playwright 验证...
 ```
 
-### 步骤 7：Playwright 自动验证（蒙版位置一致性）
+### 步骤 7：Playwright 验证（可选）
 
-修复完成后，**自动**启动 Playwright 进行运行时验证。
+修复完成后，检查是否可以进行运行时验证。
+
+#### 7.0 检测 Playwright 可用性
+
+检查项目是否配置了 Playwright：
+1. 检查 `package.json` 是否包含 `@playwright/test` 或 `playwright` 依赖
+2. 检查是否存在 `playwright.config.ts` 或 `playwright.config.js`
+
+**如果没有配置 Playwright，你必须执行以下步骤（不可跳过）**：
+
+1. 先输出检查完成的总结
+2. 然后**必须询问用户**是否要自动安装 Playwright
+3. **等待用户明确回复后**再继续或结束
+
+询问时使用以下格式：
+
+---
+
+检查完成。布局问题已列出，修复已完成（如选择修复）。
+
+检测到项目未配置 Playwright，无法进行蒙版位置自动验证。
+
+**是否自动安装 Playwright？**
+1. 是，自动安装并继续验证
+2. 否，跳过验证
+
+请输入 1 或 2：
+
+---
+
+**重要**：你必须在此处停下来，等待用户输入 1 或 2 后再继续。不要自行决定，不要跳过询问。
+
+**用户选择 1（安装）后**：
+
+执行以下命令安装 Playwright：
+- `npm install -D @playwright/test`
+- `npx playwright install chromium`
+
+安装完成后继续执行步骤 7.1。
+
+**用户选择 2（跳过）后**：直接结束命令，不再继续。
+
+---
+
+**如果已配置 Playwright**，继续执行验证：
 
 #### 7.1 前置检查
 
 ```
-## Playwright 自动验证
+## Playwright 运行时验证
 
 检查环境...
-- [ ] Playwright MCP 已配置
+- [x] Playwright 已配置
 - [ ] Dev Server 已启动
 
 如果 Dev Server 未启动：
@@ -425,24 +518,36 @@ div.page-container (position: relative, min-height: 统一值)
 > 启动后输入访问地址（如 http://localhost:3000）
 ```
 
-#### 7.2 自动截图
+#### 7.2 设置固定视口并截图
 
-对所有带蒙版的页面进行截图：
+**重要**：必须使用固定视口尺寸，否则不同内容高度会导致蒙版位置偏差。
 
 ```
+设置视口尺寸...
+
+@playwright 设置视口：1440 x 900（标准笔记本屏幕）
+
 正在截图...
 
 @playwright 打开 [页面1 URL]
+@playwright 等待页面加载完成
 @playwright 截图保存为 /tmp/layout-check/page1.png
 
 @playwright 打开 [页面2 URL]
+@playwright 等待页面加载完成
 @playwright 截图保存为 /tmp/layout-check/page2.png
 
 @playwright 打开 [页面3 URL]
+@playwright 等待页面加载完成
 @playwright 截图保存为 /tmp/layout-check/page3.png
 
-截图完成：3 个页面
+截图完成：3 个页面（视口：1440x900）
 ```
+
+**视口尺寸说明**：
+- 默认 1440x900（覆盖大多数用户）
+- 可选 1920x1080（全高清）
+- 可选 1280x720（小屏笔记本）
 
 #### 7.3 蒙版位置提取
 

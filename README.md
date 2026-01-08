@@ -1,7 +1,7 @@
 # AI 编码助手配置中心
 
 版本：v1.2
-更新：2026-01-08
+更新：2026-01-09
 作者：wwj
 
 > 本项目是 **配置模板仓库**，用于开发和维护 AI 编码助手的用户级配置。
@@ -64,11 +64,14 @@ cp .claude/CLAUDE.md ~/.claude/
 ### Gemini CLI
 
 ```bash
-# Gemini 可以完全覆盖（无历史记录）
-rm -rf ~/.gemini && cp -r .gemini ~/.gemini
+# 只覆盖配置，保留认证信息
+rm -rf ~/.gemini/commands
+cp -r .gemini/commands ~/.gemini/
+cp .gemini/GEMINI.md ~/.gemini/
+cp .gemini/settings.json ~/.gemini/
 ```
 
-> **注意**：Claude Code 的 `~/.claude/` 包含历史记录（`history.jsonl`、`projects/` 等），不能整体删除，只覆盖配置目录。
+> **注意**：Claude Code 的 `~/.claude/` 包含历史记录（`history.jsonl`、`projects/` 等），不能整体删除，只覆盖配置目录。Gemini CLI 的 `~/.gemini/` 包含认证信息（`oauth_creds.json`、`google_accounts.json`），同样只覆盖配置。
 
 ---
 
@@ -703,11 +706,14 @@ gemini
 ### 首次部署
 
 ```bash
-# 1. 备份现有配置（如有）
-[ -d ~/.gemini ] && cp -r ~/.gemini ~/.gemini.backup.$(date +%Y%m%d)
+# 1. 如果 ~/.gemini 不存在，先创建
+[ ! -d ~/.gemini ] && mkdir -p ~/.gemini
 
-# 2. 完全覆盖部署
-rm -rf ~/.gemini && cp -r .gemini ~/.gemini
+# 2. 覆盖配置，保留认证信息
+rm -rf ~/.gemini/commands
+cp -r .gemini/commands ~/.gemini/
+cp .gemini/GEMINI.md ~/.gemini/
+cp .gemini/settings.json ~/.gemini/
 
 # 3. 验证
 gemini
@@ -717,11 +723,14 @@ gemini
 ### 更新部署
 
 ```bash
-# 备份后完全覆盖
-cp -r ~/.gemini ~/.gemini.backup.$(date +%Y%m%d) && rm -rf ~/.gemini && cp -r .gemini ~/.gemini
+# 只覆盖配置，保留认证
+rm -rf ~/.gemini/commands
+cp -r .gemini/commands ~/.gemini/
+cp .gemini/GEMINI.md ~/.gemini/
+cp .gemini/settings.json ~/.gemini/
 ```
 
-> **注意**：使用完全覆盖（先删后复制）而非合并，确保配置与模板完全一致。
+> **注意**：只覆盖配置文件（`commands/`、`GEMINI.md`、`settings.json`），保留认证信息（`oauth_creds.json`、`google_accounts.json`）和运行时数据（`installation_id`、`state.json`）。
 
 ---
 

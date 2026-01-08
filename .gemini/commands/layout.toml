@@ -37,6 +37,25 @@ prompt = """
 - ✅ 纯样式用途的 class 名称
 - ✅ 布局用的包裹元素（不影响数据绑定的外层 div）
 
+### 布局一致性规则（必须遵守 GEMINI.md 全局规则）
+
+修改布局时，必须保持与项目其他页面的一致性：
+
+**蒙版/覆盖层定位**（重点）：
+- 如果页面有蒙版/覆盖层，检查其定位方式
+- 必须使用 `position: fixed` + `inset: 0` 或容器固定 `min-height` + `absolute`
+- ❌ 禁止改成 `position: absolute` + 容器高度由内容撑开（会导致位置跳动）
+- ❌ 禁止使用 `margin-top` 等硬编码偏移调整蒙版位置
+
+**页面容器**：
+- 内容区容器必须保持 `position: relative`
+- 内容区容器必须保持 `min-height: calc(100vh - var(--header-height))`
+- 不能破坏已有的容器结构
+
+**间距规范**：
+- 所有间距值必须是 4px 的倍数
+- 优先使用 CSS 变量（`var(--spacing-md)`）而非硬编码
+
 ### 修改前必须检查
 
 1. 找出所有 `v-model`、`:xxx`、`@xxx` → **标记为不可动**
