@@ -9,13 +9,79 @@ description: 扫描项目生成配置（CLAUDE.md/restart.sh/ignore/Docker）
 | 序号 | 文件 | 用途 | 模板位置 |
 |------|------|------|---------|
 | 1 | `.claude/CLAUDE.md` | 项目配置 | 直接生成 |
-| 2 | `restart.sh` | 前后端打包+启动脚本 | `templates/restart-*.sh.tmpl` |
-| 3 | `.claudeignore` | Claude Code 忽略 | `templates/claudeignore.tmpl` |
-| 4 | `.geminiignore` | Gemini CLI 忽略 | 与 `.claudeignore` 内容相同 |
-| 5 | `.gitignore` | Git 忽略 | `templates/gitignore-*.tmpl` |
-| 6 | `.dockerignore` | Docker 忽略 | `templates/dockerignore.tmpl` |
-| 7 | `Dockerfile` | 容器构建 | `templates/Dockerfile-*.tmpl` |
-| 8 | `docker-compose.yml` | 容器编排 | `templates/docker-compose-*.yml.tmpl` |
+| 2 | `restart.sh` | 前后端打包+启动脚本 | 直接生成 |
+| 3 | `.claudeignore` | Claude Code 忽略 | 直接生成 |
+| 4 | `.geminiignore` | Gemini CLI 忽略 | **必须生成**，内容复制自 `.claudeignore` |
+| 5 | `.gitignore` | Git 忽略 | 直接生成 |
+| 6 | `.dockerignore` | Docker 忽略 | 直接生成 |
+| 7 | `Dockerfile` | 容器构建 | 直接生成 |
+| 8 | `docker-compose.yml` | 容器编排 | 直接生成 |
+| 9 | `README.md` | 项目说明 | 直接生成（如不存在或用户选择覆盖） |
+
+---
+
+## 忽略文件内容规范
+
+### .claudeignore / .geminiignore（必须包含）
+
+```
+# 依赖目录
+node_modules/
+vendor/
+
+# 构建产物
+dist/
+build/
+*.exe
+
+# IDE 和编辑器
+.idea/
+.vscode/
+*.swp
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 日志和临时文件
+*.log
+tmp/
+
+# MCP 插件缓存
+.playwright-mcp/
+
+# 数据库文件（按需）
+*.db
+*.sqlite
+```
+
+### .gitignore（在上述基础上增加）
+
+```
+# 环境配置
+.env
+.env.local
+
+# 敏感文件
+*.pem
+*.key
+```
+
+### .dockerignore（在上述基础上增加）
+
+```
+# Git
+.git/
+.gitignore
+
+# 文档
+*.md
+LICENSE
+
+# 测试
+*_test.go
+__tests__/
+```
 
 ---
 
@@ -51,7 +117,7 @@ description: 扫描项目生成配置（CLAUDE.md/restart.sh/ignore/Docker）
 **数据库**: [检测结果]
 **前后端分离**: [是/否]
 
-即将生成 8 个文件，是否继续？[Y/n]
+即将生成 9 个文件，是否继续？[Y/n]
 ```
 
 ### 步骤 3：逐个生成文件
@@ -102,6 +168,7 @@ chmod +x restart.sh
 ✅ .dockerignore
 ✅ Dockerfile
 ✅ docker-compose.yml
+✅ README.md
 
 跳过文件：
 ⏭️ [用户选择跳过的文件]
@@ -131,3 +198,112 @@ ADMIN_USER=myuser ADMIN_PASS=mypass ./restart.sh
 - 生成后务必检查文件内容是否符合项目实际
 - `docker-compose.yml` 中的密码应在生产环境修改
 - 如项目结构特殊，可能需要手动调整模板
+
+---
+
+## README.md 生成规范
+
+根据扫描结果生成完整的项目说明文档，包含以下章节：
+
+### 必须包含的章节
+
+```markdown
+# [项目名称]
+
+## 项目概述
+
+[根据代码分析生成项目描述]
+
+### 核心功能
+
+- **功能1**: 描述
+- **功能2**: 描述
+...
+
+## 技术栈
+
+### 后端
+
+| 层级 | 技术 | 版本 |
+|------|------|------|
+| 框架 | [检测到的框架] | [版本] |
+| 语言 | [Go/Java/...] | [版本] |
+| ORM | [检测到的ORM] | [版本] |
+| 数据库 | [检测到的数据库] | [版本] |
+| 缓存 | [如有] | [版本] |
+| 构建 | [Maven/Go/...] | - |
+
+### 前端（如有）
+
+| 层级 | 技术 | 版本 |
+|------|------|------|
+| 框架 | [Vue/React/...] | [版本] |
+| 语言 | TypeScript | [版本] |
+| UI 组件库 | [Element Plus/Ant Design/...] | [版本] |
+| 构建 | Vite | [版本] |
+
+## 项目结构
+
+```
+[项目名]/
+├── [目录1]/                # 说明
+├── [目录2]/                # 说明
+└── ...
+```
+
+## 快速开始
+
+### 环境要求
+
+- [语言] [版本]+
+- [数据库] [版本]+
+- Node.js 18+ (前端开发，如有)
+
+### 后端启动
+
+```bash
+# 克隆项目
+git clone <repository-url>
+cd [项目名]
+
+# [根据项目类型生成启动命令]
+```
+
+### 前端启动（如有）
+
+```bash
+cd [前端目录]
+npm install
+npm run dev
+```
+
+### 访问地址
+
+| 服务 | 地址 |
+|------|------|
+| 前端 | http://localhost:[端口] |
+| 后端 API | http://localhost:[端口]/api |
+
+## Docker 部署
+
+```bash
+# 启动
+docker-compose up -d
+```
+
+## 许可证
+
+[LICENSE](./LICENSE)
+
+---
+
+**当前版本**: v1.0
+**最后更新**: [生成日期]
+```
+
+### 生成原则
+
+1. **版本号**：从 `go.mod`、`pom.xml`、`package.json` 中提取
+2. **项目结构**：扫描实际目录生成，只列出主要目录
+3. **端口号**：从配置文件中提取，或使用默认值
+4. **功能描述**：根据代码结构和命名推断
